@@ -18,12 +18,11 @@ import Textarea from '@mui/joy/Textarea';
 import Stack from '@mui/joy/Stack';
 import { useState } from 'react';
 import Loader from '../Loader/Loader';
-import { Chip } from '@mui/material';
+import { Alert, Chip, Snackbar } from '@mui/material';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import Divider from '@mui/joy/Divider';
 import DialogActions from '@mui/joy/DialogActions';
 import "./Home.css"
-
 
 function Home() {
   const {notes,status} = useSelector(state=>state.note)
@@ -36,6 +35,21 @@ function Home() {
     const [id,setId] = useState()
     const [prev,setPrev] = useState({})
 
+    const [openSnack, setOpenSnack] = React.useState(false);
+
+    const handleClick = ()=>{
+      setOpenSnack(true);
+    }
+
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenSnack(false);
+    };
+  
+
    
 
   const deleteFun = (id) =>{
@@ -46,13 +60,20 @@ function Home() {
   const handleDelete = () =>{
     dispatch(deleteNote(id))
     setOpenDelete(false);
+    handleClick()
   }
   
-  const handleUpdate = (id,note) =>{
+  const handleUpdate = async(id,note) =>{
     setId(id)
     setPrev(note)
     setOpen(true)
+  
   }
+
+  
+ 
+
+
 
   const handleSubmit =(title,content,category) =>{
      const obj = {
@@ -62,11 +83,13 @@ function Home() {
       category:category || prev.category
      }
      dispatch(updatedNote(obj))
+     
+    // Show Snackbar after the status has changed to 'updated'
+    
+      handleClick();
+    
   }
 
-  useEffect(()=>{
-     dispatch(getNotes())
-  },[])
   
   if (status === 'pending') {
     return  <div  style={{height:"50vh",width:"100%", display:"flex",justifyContent:"center",alignItems:"center"}}>
@@ -75,14 +98,20 @@ function Home() {
   }
 
   if (status === 'rejected') {
-    return <h1>Failed to get Notes! Try again later.</h1>;
+    return <Alert severity="error">Failed to get Notes! Try again later.</Alert>;
   }
+    
+  if(notes?.data?.notes?.length === 0) {
+    return <Alert severity="info">Notes not found!</Alert>
+  }
+
   
+   
   return (
-    <div style={{}}>
+    <div>
        <Box  sx={{ minWidth: 275 }} style={{display:"flex" , flexWrap: "wrap"}}>
   {notes && notes.data && notes.data.notes && notes.data.notes.map((note,id)=>{
-     return  <Card key={id} style={{width:"20rem",height:"20rem",margin:"1.2rem",display:"flex",justifyContent:"space-between",flexDirection:"column"}} variant="outlined">
+    return <Card key={id} style={{width:"20rem",height:"20rem",margin:"1.2rem",display:"flex",justifyContent:"space-between",flexDirection:"column"}} variant="outlined">
       <React.Fragment>
     <CardContent>
       <Typography variant="h5" component="div">
@@ -99,12 +128,12 @@ function Home() {
     </CardActions>
   </React.Fragment>
   </Card>
-
-
   }) 
 }
-
  </Box>
+
+
+
  <Modal open={open}  onClose={() => setOpen(false)}>
         <ModalDialog>
           <DialogTitle>Create new note</DialogTitle>
@@ -155,6 +184,19 @@ function Home() {
           </DialogActions>
         </ModalDialog>
       </Modal>
+
+
+      <Snackbar open={openSnack} autoHideDuration={1000} onClose={handleClose}>
+  <Alert
+    onClose={handleClose}
+    severity="success"
+    variant="filled"
+    sx={{ width: '100%' }}
+  >
+    {status==="updated"&&"Note updated successfully!"}
+    {status==="deleted"&&"Note deleted successfully!"}
+  </Alert>
+</Snackbar>
 
 </div>
   )

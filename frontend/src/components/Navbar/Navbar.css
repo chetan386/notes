@@ -1,0 +1,5 @@
+.search{
+    &:focus-within{
+        border: 1px solid rgb(0, 97, 208)
+    }
+}

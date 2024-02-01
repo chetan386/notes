@@ -8,7 +8,7 @@ function Root() {
   return (
     <div>
       <Provider store={store}>
-      <Navbar />
+        <Navbar />
       <main>
         <Outlet />
       </main>
