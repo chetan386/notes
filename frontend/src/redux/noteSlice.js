@@ -6,7 +6,7 @@ const noteSlice = createSlice({
     initialState:{
         status: "idle",
         notes: [],
-        render: true
+        render: true,
     },
     extraReducers:(builder)=>{
         builder
@@ -14,6 +14,9 @@ const noteSlice = createSlice({
             state.notes = action.payload;
             state.status = "fulfilled"
             state.render= true
+            if(action.payload.data.message==="Invalid token"){
+                state.status = "expire"
+            }
         })
         .addCase(getNotes.pending,(state,action)=>{
             state.status = "pending"
@@ -71,7 +74,10 @@ export default noteSlice.reducer;
 
 export const getNotes = createAsyncThunk('notes/get',async(obj1)=>{
    const {search , filter,sort} = obj1
-      const response = await axios.get(`/api/api/v1?search=${search}&filter=${filter}&sort=${sort}`)
+      const response = await axios.get(`/api/api/v1?search=${search}&filter=${filter}&sort=${sort}`,{
+        withCredentials: true,
+      })
+
       return response;
 })
 
@@ -95,3 +101,4 @@ export const updatedNote = createAsyncThunk("note/update",async(obj)=>{
     
      return response
 })
+

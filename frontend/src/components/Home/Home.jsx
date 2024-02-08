@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {useSelector,useDispatch} from "react-redux"
-import { deleteNote, getNotes, updatedNote } from '../../redux/noteSlice'
+import { deleteNote, updatedNote } from '../../redux/noteSlice'
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -23,6 +23,7 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import Divider from '@mui/joy/Divider';
 import DialogActions from '@mui/joy/DialogActions';
 import "./Home.css"
+import Navbar from '../Navbar/Navbar';
 
 function Home() {
   const {notes,status} = useSelector(state=>state.note)
@@ -71,9 +72,6 @@ function Home() {
   }
 
   
- 
-
-
 
   const handleSubmit =(title,content,category) =>{
      const obj = {
@@ -88,7 +86,7 @@ function Home() {
     
       handleClick();
     
-  }
+    }
 
   
   if (status === 'pending') {
@@ -105,8 +103,11 @@ function Home() {
     return <Alert severity="info">Notes not found!</Alert>
   }
 
+  if(status === 'expire'){
+    return <Alert severity="info">Session not found! Please log in again.</Alert>
+  }
+
   
-   
   return (
     <div>
        <Box  sx={{ minWidth: 275 }} style={{display:"flex" , flexWrap: "wrap"}}>

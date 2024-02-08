@@ -1,9 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit"
 import noteSlice from "./noteSlice";
+import userSlice from "./userSlice";
 
 const store = configureStore({
     reducer:{
-      note: noteSlice
+      note: noteSlice,
+      user: userSlice
     },
     middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

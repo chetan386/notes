@@ -1,4 +1,5 @@
 const Note = require("../Models/noteModel")
+const User = require("../models/userModel")
 
 exports.createNote = async(req,res) =>{
     const note = await Note.create(req.body)

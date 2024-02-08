@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 
 
@@ -13,6 +14,7 @@ const corsOptions ={
 }
 app.use(cors(corsOptions));
 app.use(express.json())
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({extended:false}))
 
 
@@ -24,7 +26,10 @@ connectDB();
 
 
 const note = require("./routes/noteRoute")
+const user = require("./routes/userRoute")
+
 app.use("/api/v1",note)
+app.use("/api/v1",user)
 
   
 

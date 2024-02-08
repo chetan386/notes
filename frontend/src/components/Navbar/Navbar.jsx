@@ -15,6 +15,9 @@ import { createNote, getNotes } from '../../redux/noteSlice';
 import SearchBar from "material-ui-search-bar";
 import "./Navbar.css"
 import { Alert, InputLabel, MenuItem, Select, Snackbar } from '@mui/material';
+import { logOut } from '../../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -30,8 +33,8 @@ function Navbar() {
     const [search,setSearch] = useState("")
     const {notes,render} = useSelector(state => state.note)
     const [sort,setSort] = useState("asc")
-    
-
+    const {status} = useSelector(state => state.user)
+   const history = useNavigate()
     const [filter, setFilter] = React.useState("All");
     const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -78,6 +81,10 @@ function Navbar() {
       window.location.reload();
     }
 
+    const handleLogout = () =>{
+      dispatch(logOut())
+    }
+
     const obj1 = {
       search: search,
       filter:filter,
@@ -99,10 +106,17 @@ function Navbar() {
     if( (initialArrayRef.current && initialArrayRef.current.data && initialArrayRef.current.data.notes) ){
        mapping = Array.from(new Set(initialArrayRef.current.data.notes.map((note) => note.category)))
     }
+
+
+
     
     React.useEffect(()=>{
-      dispatch(getNotes(obj1))
-    },[search,filter,sort])
+
+        dispatch(getNotes(obj1))
+        if(status === "logout"){
+          history("/")
+        }
+    },[search,filter,sort,status])
 
   
 
@@ -112,6 +126,9 @@ function Navbar() {
   return (
     <div style={{margin:"2rem"}}>
       <h1 onClick={handleHeading} style={{textAlign:"center",fontFamily:"sans-serif",marginBottom:"2rem"}}>Notes.....</h1>
+      <div style={{width: "100%",display: "flex",justifyContent: "flex-end"}}>
+      <Button style={{marginRight: "37px"}} onClick={handleLogout}>Logout</Button>
+      </div>
       <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap"}}>
       <Button style={{width: "12rem",height:"3rem",margin:"2rem",textAlign:"center"}} variant="outlined" onClick={() => setOpen(true)}>Add a note</Button>
       <div style={{display:"flex",flexWrap:"wrap"}}>
